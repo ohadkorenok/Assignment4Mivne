@@ -1,7 +1,10 @@
+import java.io.*;
 import java.lang.String;
+
 
 public class BTree {
 
+    private static BufferedReader br;
     private BTreeNode root;
     private int t;
 
@@ -41,12 +44,12 @@ public class BTree {
             s.addChild(root);
             splitChild(s, 1, root);
             root = s;
-            insertNonFull(root, toInsert);
         }
+        insertNonFull(root, toInsert);
         return this.root;
     }
 
-    private boolean insertNonFull(BTreeNode node, String toInsert) {
+    private boolean insertNonFull(BTreeNode node, String toInsert) { //TODO:: check if anything initialized .... and minimum 15 lines of code.
         int i = 0;
         if (node.isLeaf()) {
             while (i < node.getN() && toInsert.compareTo(node.getKeys().get(i)) > 0) {
@@ -92,6 +95,40 @@ public class BTree {
         }
         father.insertToKeys(richSon.getKeys().get(t - 1));
 
+    }
+
+
+    public BTree createFullTree(String input){
+        System.out.println(input);
+
+        return this;
+    }
+
+    public static boolean readFile(String filePath) {
+        File file = new File(filePath);
+        try {
+            br = new BufferedReader(new FileReader(file));
+
+        } catch (FileNotFoundException e) {
+            return false;
+
+        }
+        return true;
+
+
+    }
+
+    public boolean readFile(){
+        String st;
+        try {
+            while ((st = br.readLine()) != null) {
+                System.out.println(st);
+                this.insert(st);
+            }
+        } catch (IOException e) {;
+            return false;
+        }
+        return true;
     }
 
 }

@@ -1,3 +1,4 @@
+import java.io.*;
 public class BTreeNode {
 
     private int n;
@@ -31,7 +32,7 @@ public class BTreeNode {
         this.t = t;
     }
 
-    public LinkedList <String> getKeys() {
+    public LinkedList<String> getKeys() {
         return keys;
     }
 
@@ -60,29 +61,29 @@ public class BTreeNode {
         return this.children;
     }
 
-    public LinkedList<String> insertToKeys(String toInsert, int i ){
+    public LinkedList<String> insertToKeys(String toInsert, int i) {
         this.keys.add(i, toInsert);
         return this.keys;
     }
 
 
-    public LinkedList<String> insertToKeys(String toInsert){
+    public LinkedList<String> insertToKeys(String toInsert) {
         this.keys.add(toInsert);
         return this.keys;
     }
 
-    public LinkedList<BTreeNode> insertChild(BTreeNode toInsert, int i ){
+    public LinkedList<BTreeNode> insertChild(BTreeNode toInsert, int i) {
         this.children.add(i, toInsert);
         return this.children;
     }
 
 
-    public LinkedList<BTreeNode> insertChild(BTreeNode toInsert){
+    public LinkedList<BTreeNode> insertChild(BTreeNode toInsert) {
         this.children.add(toInsert);
         return this.children;
     }
 
 
-    }
+}
 
 

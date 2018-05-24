@@ -19,22 +19,22 @@ public class Runner {
 
 		//Get the BFS representation of the btree
 		String treeLayout = btree.toString();
-		
+
 		// Create a Messages object based on the messages file.
 		Messages messages = createArrayOfMessages();
 
 		//For each message, create a hash table based on the words in the message.
 		messages.createHashTables(args[1]);
-		
+
 		//Find the spam messages- Use the path of the spam_words file.
-		//	(The Messages object should use the file path to create the Spam array. 
-		//	Then, it will determine for each message if it is spam, using the Spam array, 
+		//	(The Messages object should use the file path to create the Spam array.
+		//	Then, it will determine for each message if it is spam, using the Spam array,
 		//	the btree and the hash table of the message).
 		String spamMessages = messages.findSpams(System.getProperty("user.dir")+"/spam_words.txt", btree);
-		
+
 		//create a file with the program's expected output
 		createOutputFile(treeLayout, spamMessages, System.getProperty("user.dir")+"/output.txt");
-			    
+
 	}
 
 
