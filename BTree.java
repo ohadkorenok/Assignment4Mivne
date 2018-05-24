@@ -9,6 +9,7 @@ public class BTree {
     private int t;
 
     public BTree(String tVal) {
+        this.t  = Integer.parseInt(tVal);
         this.root = new BTreeNode(t);
         this.root.setLeaf(true);
         this.root.setN(0);
@@ -37,15 +38,16 @@ public class BTree {
     }
 
     public BTreeNode insert(String toInsert) {
+        BTreeNode r = root;
         if (root.getN() == (2 * t) - 1) {
             BTreeNode s = new BTreeNode(t);
             this.root = s;
             s.setLeaf(false);
-            s.addChild(root);
-            splitChild(s, 1, root);
-            root = s;
+            s.addChild(r);
+            splitChild(s, 0, r);
+            r = s;
         }
-        insertNonFull(root, toInsert);
+        insertNonFull(r, toInsert);
         return this.root;
     }
 
@@ -55,9 +57,7 @@ public class BTree {
             while (i < node.getN() && toInsert.compareTo(node.getKeys().get(i)) > 0) {
                 i++;
             }
-            LinkedList<String> keys = node.getKeys();
-            keys.add(i, toInsert);
-            node.insertToKeys(toInsert, i + 1);
+            node.insertToKeys(toInsert,i);
             return true;
         } else {
 
@@ -66,42 +66,69 @@ public class BTree {
             }
             if (node.getChildren().get(i).getN() == (2 * t - 1)) {
                 splitChild(node, i, node.getChildren().get(i));
-                if (toInsert.compareTo(node.getKeys().get(i)) > 0) {
-                    i++;
+                if (toInsert.compareTo(node.getKeys().get(i)) < 0) {
+                    i++; //TODO :: check if problematic
                 }
             }
+//            if(i==node.getN()){
+//                return insertNonFull(node.getChildren().get(i-1), toInsert);
+//            }
             return insertNonFull(node.getChildren().get(i), toInsert);
         }
     }
 
+    private void splitRoot(){
 
-    private void splitChild(BTreeNode father, int numOfChildren, BTreeNode richSon) {
+    }
+
+    private void splitChild(BTreeNode father, int index, BTreeNode richSon) {
         BTreeNode son1 = new BTreeNode(t);
         BTreeNode son2 = new BTreeNode(t);
         int i = 0;
         for (int j = 0; j < t - 1 && j < richSon.getN(); j++) {
             son1.insertToKeys(richSon.getKeys().get(j));
+            son2.insertToKeys(richSon.getKeys().get(j+t));
         }
+        son1.setN(t-1);
+        son2.setN(t-1);
 
-
-        for (int j = t; j < richSon.getN() && j < (2 * t) - 1; j++) {
-            son2.insertToKeys(richSon.getKeys().get(j));
-        }
         if (!richSon.isLeaf()) {
             for (int j = 0; j < t; j++) {
                 son1.insertChild(richSon.getChildren().get(j));
                 son2.insertChild(richSon.getChildren().get(j + t));
             }
         }
-        father.insertToKeys(richSon.getKeys().get(t - 1));
-
+        father.insertToKeys(richSon.getKeys().get(t-1));
+        father.insertChild(son1,index);
+        father.getChildren().set( index+1, son2);
     }
 
 
-    public BTree createFullTree(String input){
+    public BTree createFullTree(String input) {
+        System.out.println("hi, we just started everything. good luck guys. ");
         System.out.println(input);
+        String fileAnswer = "";
+        if (!readFile(input)) {
+            fileAnswer = "un";
+        }
+        System.out.println("the file was read " + fileAnswer + "successfully");
+        if (!insertFileToTree()) {
+            fileAnswer = "un";
+        }
+        System.out.println("The insertion was "+fileAnswer+"successful");
 
+        for (String key:
+             this.root.getKeys()) {
+            System.out.print(key +", ");
+        }
         return this;
+    }
+
+
+    @Override
+    public String toString() {
+        System.out.println("\n entered to toString");
+        return this.root.toString();
     }
 
     public static boolean readFile(String filePath) {
@@ -118,14 +145,14 @@ public class BTree {
 
     }
 
-    public boolean readFile(){
+    public boolean insertFileToTree() {
         String st;
         try {
             while ((st = br.readLine()) != null) {
                 System.out.println(st);
                 this.insert(st);
             }
-        } catch (IOException e) {;
+        } catch (IOException e) {
             return false;
         }
         return true;

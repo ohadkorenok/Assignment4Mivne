@@ -1,4 +1,5 @@
 import java.io.*;
+
 public class BTreeNode {
 
     private int n;
@@ -63,12 +64,14 @@ public class BTreeNode {
 
     public LinkedList<String> insertToKeys(String toInsert, int i) {
         this.keys.add(i, toInsert);
+        n++;
         return this.keys;
     }
 
 
     public LinkedList<String> insertToKeys(String toInsert) {
         this.keys.add(toInsert);
+        n++;
         return this.keys;
     }
 
@@ -77,13 +80,25 @@ public class BTreeNode {
         return this.children;
     }
 
-
     public LinkedList<BTreeNode> insertChild(BTreeNode toInsert) {
         this.children.add(toInsert);
         return this.children;
     }
 
-
+    @Override
+    public String toString() {
+        System.out.println("entered to toString of BtreeNode");
+        String st = "";
+        for (int i = 0; i < n; i++) {
+            st += keys.get(i) + " ,";
+        }
+        st += "\n";
+        for (BTreeNode child :
+                this.getChildren()) {
+            st += child.toString();
+        }
+        return st;
+    }
 }
 
 
