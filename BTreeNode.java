@@ -70,8 +70,11 @@ public class BTreeNode {
 
 
     public LinkedList<String> insertToKeys(String toInsert) {
-        this.keys.add(toInsert);
-        n++;
+        int i=0;
+        while (i<n && toInsert.compareTo(this.keys.get(i))> 0){
+            i++;
+        }
+        this.insertToKeys(toInsert, i);
         return this.keys;
     }
 

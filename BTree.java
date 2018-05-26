@@ -1,5 +1,4 @@
 import java.io.*;
-import java.lang.String;
 
 
 public class BTree {
@@ -9,7 +8,7 @@ public class BTree {
     private int t;
 
     public BTree(String tVal) {
-        this.t  = Integer.parseInt(tVal);
+        this.t = Integer.parseInt(tVal);
         this.root = new BTreeNode(t);
         this.root.setLeaf(true);
         this.root.setN(0);
@@ -57,7 +56,7 @@ public class BTree {
             while (i < node.getN() && toInsert.compareTo(node.getKeys().get(i)) > 0) {
                 i++;
             }
-            node.insertToKeys(toInsert,i);
+            node.insertToKeys(toInsert, i);
             return true;
         } else {
 
@@ -66,7 +65,7 @@ public class BTree {
             }
             if (node.getChildren().get(i).getN() == (2 * t - 1)) {
                 splitChild(node, i, node.getChildren().get(i));
-                if (toInsert.compareTo(node.getKeys().get(i)) < 0) {
+                if (toInsert.compareTo(node.getKeys().get(i)) > 0) {
                     i++; //TODO :: check if problematic
                 }
             }
@@ -77,7 +76,7 @@ public class BTree {
         }
     }
 
-    private void splitRoot(){
+    private void splitRoot() {
 
     }
 
@@ -87,10 +86,10 @@ public class BTree {
         int i = 0;
         for (int j = 0; j < t - 1 && j < richSon.getN(); j++) {
             son1.insertToKeys(richSon.getKeys().get(j));
-            son2.insertToKeys(richSon.getKeys().get(j+t));
+            son2.insertToKeys(richSon.getKeys().get(j + t));
         }
-        son1.setN(t-1);
-        son2.setN(t-1);
+        son1.setN(t - 1);
+        son2.setN(t - 1);
 
         if (!richSon.isLeaf()) {
             for (int j = 0; j < t; j++) {
@@ -98,9 +97,9 @@ public class BTree {
                 son2.insertChild(richSon.getChildren().get(j + t));
             }
         }
-        father.insertToKeys(richSon.getKeys().get(t-1));
-        father.insertChild(son1,index);
-        father.getChildren().set( index+1, son2);
+        father.insertToKeys(richSon.getKeys().get(t - 1));
+        father.insertChild(son1, index);
+        father.getChildren().set(index + 1, son2);
     }
 
 
@@ -115,11 +114,11 @@ public class BTree {
         if (!insertFileToTree()) {
             fileAnswer = "un";
         }
-        System.out.println("The insertion was "+fileAnswer+"successful");
+        System.out.println("The insertion was " + fileAnswer + "successful");
 
-        for (String key:
-             this.root.getKeys()) {
-            System.out.print(key +", ");
+        for (String key :
+                this.root.getKeys()) {
+            System.out.print(key + ", ");
         }
         return this;
     }
@@ -127,7 +126,6 @@ public class BTree {
 
     @Override
     public String toString() {
-        System.out.println("\n entered to toString");
         return this.root.toString();
     }
 
@@ -156,6 +154,72 @@ public class BTree {
             return false;
         }
         return true;
+    }
+
+    public boolean BFSScan() {
+        String st = "";
+        QueueAsLinkedList<LinkedList<LinkedList<BTreeNode>>> q = new QueueAsLinkedList<>();
+        BTreeNode r = root;
+        LinkedList<LinkedList<BTreeNode>> level = new LinkedList<>();
+        level.add(r.getChildren());
+        q.enqueue(level);
+        while (!q.isEmpty()) {
+            st += '#';
+            st = concatenateLevel(st, level, q);
+            level = q.dequeue();
+        }
+        return writeToOutput(st, System.getProperty("user.dir") + "/output.txt");
+    }
+
+    private boolean writeToOutput(String st, String filePath) {
+        try {
+            System.out.println("hi, this is the string: " + st);
+            BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
+            bw.write(st);
+            bw.close();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    private String concatenateLevel(String st, LinkedList<LinkedList<BTreeNode>> level, QueueAsLinkedList<LinkedList<LinkedList<BTreeNode>>> q) {
+        if (!level.isEmpty()) {
+            LinkedList<LinkedList<BTreeNode>> levelToPush = new LinkedList<>();
+            for (LinkedList<BTreeNode> children :
+                    level) {
+                st = concatenateChildrenOfSameFather(st, children, levelToPush);
+                st += '^';
+            }
+            if (!levelToPush.isEmpty()) {
+                q.enqueue(levelToPush);
+            }
+        }
+        return st;
+    }
+
+    private String concatenateKeysAndBuildChildrenList(String st, BTreeNode node, LinkedList<LinkedList<BTreeNode>> levelToPush) {
+
+        for (String key : node.getKeys()
+                ) {
+            st += key + ", ";
+        }
+        st = st.substring(0, st.length() - 2); // replace the ' ,' in nothing...
+        LinkedList<BTreeNode> children = node.getChildren();
+        if (!children.isEmpty()) {
+            levelToPush.add(children);
+        }
+        return st;
+    }
+
+
+    private String concatenateChildrenOfSameFather(String st, LinkedList<BTreeNode> childrenOfSameFather, LinkedList<LinkedList<BTreeNode>> levelToPush) {
+        for (BTreeNode child :
+                childrenOfSameFather) {
+            st = concatenateKeysAndBuildChildrenList(st, child, levelToPush); // attention!!! changes also the `level to push`.
+            st += '|';
+        }
+        return st;
     }
 
 }

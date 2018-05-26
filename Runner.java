@@ -18,9 +18,11 @@ public class Runner {
 		BTree btree = createTree(args[0]);
 
 		//Get the BFS representation of the btree
-		String treeLayout = btree.toString();
-		System.out.println(treeLayout);
+//		String treeLayout = btree.toString();
+//		System.out.println(treeLayout);
 
+		boolean bfsscan = btree.BFSScan();
+		System.out.println("ok!");
 //		// Create a Messages object based on the messages file.
 //		Messages messages = createArrayOfMessages();
 //
