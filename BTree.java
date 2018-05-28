@@ -104,31 +104,16 @@ public class BTree {
 
 
     public BTree createFullTree(String input) {
-        System.out.println("hi, we just started everything. good luck guys. ");
-        System.out.println(input);
-        String fileAnswer = "";
-        if (!readFile(input)) {
-            fileAnswer = "un";
-        }
-        System.out.println("the file was read " + fileAnswer + "successfully");
-        if (!insertFileToTree()) {
-            fileAnswer = "un";
-        }
-        System.out.println("The insertion was " + fileAnswer + "successful");
-
-        for (String key :
-                this.root.getKeys()) {
-            System.out.print(key + ", ");
-        }
+        readFile(input);
+        insertFileToTree();
         return this;
     }
 
-
-    @Override
-    public String toString() {
-        return this.root.toString();
-    }
-
+    /**
+     * This method reads the file and adds a BufferedReader static object represents the file.
+     * @param filePath
+     * @return boolean if file exists and has permissions.
+     */
     public static boolean readFile(String filePath) {
         File file = new File(filePath);
         try {
@@ -143,6 +128,10 @@ public class BTree {
 
     }
 
+    /**
+     * This method inserts the contents of the file (that was opened to read mode in `br` variable) to the Tree.
+     * @return boolean represents success.
+     */
     public boolean insertFileToTree() {
         String st;
         try {
@@ -156,24 +145,47 @@ public class BTree {
         return true;
     }
 
-    public boolean BFSScan() {
+    /**
+     * This method cuts the last letter of the string if it's the char that given as argument.
+     * @param st
+     * @param c
+     * @return
+     */
+    private static String shave(String st, char c){
+        if (st.charAt(st.length() - 1) == c) {
+            st = st.substring(0, st.length() - 1);
+        }
+    return st;
+    }
+
+    /**
+     * This method does alot. we will explain about it soon .
+     * @return
+     */
+    public String toString() {
         String st = "";
         QueueAsLinkedList<LinkedList<LinkedList<BTreeNode>>> q = new QueueAsLinkedList<>();
         BTreeNode r = root;
         LinkedList<LinkedList<BTreeNode>> level = new LinkedList<>();
-        level.add(r.getChildren());
+        st = concatenateKeysAndBuildChildrenList(st, r, level);
+        st += "#";
         q.enqueue(level);
         while (!q.isEmpty()) {
-            st += '#';
-            st = concatenateLevel(st, level, q);
             level = q.dequeue();
-        }
-        return writeToOutput(st, System.getProperty("user.dir") + "/output.txt");
-    }
+            st = concatenateLevel(st, level, q);
+            st += '#'; }
+        st = shave(st,'#');
+        writeToOutput(st, System.getProperty("user.dir") + "/output.txt");
+        return st; }
 
+    /**
+     * This method writes the desired string to the file in the filepath (if we have permissions of course).
+     * @param st
+     * @param filePath
+     * @return
+     */
     private boolean writeToOutput(String st, String filePath) {
         try {
-            System.out.println("hi, this is the string: " + st);
             BufferedWriter bw = new BufferedWriter(new FileWriter(filePath));
             bw.write(st);
             bw.close();
@@ -183,17 +195,23 @@ public class BTree {
         }
     }
 
+    /**
+     *
+     * @param st
+     * @param level
+     * @param q
+     * @return
+     */
     private String concatenateLevel(String st, LinkedList<LinkedList<BTreeNode>> level, QueueAsLinkedList<LinkedList<LinkedList<BTreeNode>>> q) {
         if (!level.isEmpty()) {
             LinkedList<LinkedList<BTreeNode>> levelToPush = new LinkedList<>();
             for (LinkedList<BTreeNode> children :
                     level) {
                 st = concatenateChildrenOfSameFather(st, children, levelToPush);
-                st += '^';
-            }
+                st += '^'; }
+            st = shave(st,'^');
             if (!levelToPush.isEmpty()) {
-                q.enqueue(levelToPush);
-            }
+                q.enqueue(levelToPush); }
         }
         return st;
     }
@@ -202,9 +220,9 @@ public class BTree {
 
         for (String key : node.getKeys()
                 ) {
-            st += key + ", ";
+            st += key + ",";
         }
-        st = st.substring(0, st.length() - 2); // replace the ' ,' in nothing...
+        st = shave(st, ',');
         LinkedList<BTreeNode> children = node.getChildren();
         if (!children.isEmpty()) {
             levelToPush.add(children);
@@ -219,6 +237,7 @@ public class BTree {
             st = concatenateKeysAndBuildChildrenList(st, child, levelToPush); // attention!!! changes also the `level to push`.
             st += '|';
         }
+        st = shave(st, '|');
         return st;
     }
 
