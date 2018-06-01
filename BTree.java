@@ -27,7 +27,7 @@ public class BTree {
         while (i < node.getN() && toFind.compareTo(node.getKeys().get(i)) > 0) {
             i++;
         }
-        if (i <= node.getN() && toFind.compareTo(node.getKeys().get(i)) == 0) {
+        if (i < node.getN() && toFind.compareTo(node.getKeys().get(i)) == 0) {
             return new Pair(node, i);
         }
         if (node.isLeaf()) {
@@ -155,7 +155,7 @@ public class BTree {
      * @param c
      * @return
      */
-    private static String shave(String st, char c){
+    public static String shave(String st, char c){
         if (st.charAt(st.length() - 1) == c) {
             st = st.substring(0, st.length() - 1);
         }

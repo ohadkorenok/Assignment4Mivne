@@ -27,6 +27,8 @@ public class HashTable {
     public HashListElement searchWord(String element){
         Word source=new Word(element);
         int hashCode=Hashfunction(source.getKey());
-        return table[hashCode].contains(element);
+        if(table[hashCode]!=null)
+            return table[hashCode].contains(element);
+        else return null;
     }
 }

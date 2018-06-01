@@ -111,18 +111,20 @@ public class Messages implements Iterable<Message> {
     }
     public String findSpams(String path,BTree btree){
         String output = "";
+        boolean foundSpam=false;
         try {
             Spams spamArr = new Spams(path);
             for(int i=0;i<messages.length;i++){
                 if (!checkifFriends(i,btree)){
                     Iterator<Spam> it=spamArr.iterator();
-                    while(it.hasNext()){
+                    while(it.hasNext()&!foundSpam){
                         Spam obj=it.next();
                         HashListElement toSearch=messages[i].getTable().searchWord(obj.getWord());
                         if(toSearch!=null){
-                            if((toSearch.getCounter()/(double)messages[i].getTable().getnumberOfEntries())*100 >= obj.getPercent())
-                                output+=(i+",");}}}}
-            return output;
+                            if((toSearch.getCounter()/(double)messages[i].getTable().getnumberOfEntries())*100 >= obj.getPercent()){
+                                output+=(i+",");foundSpam=true;}
+                        }}}foundSpam=false;}
+            return BTree.shave(output, ',');
         }
         catch(IOException e) {
             System.out.println(e);
