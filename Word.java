@@ -10,7 +10,7 @@ public class Word {
     public void generateKey(){
         int key=0;
         for(int i=0;i<word.length();i++)
-            key+=word.charAt(i);
+            key+=(i+1)*word.charAt(i);
         this.key=key;
     }
     public int getKey(){return key;}

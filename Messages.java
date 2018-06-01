@@ -8,41 +8,54 @@ import java.util.NoSuchElementException;
 public class Messages implements Iterable<Message> {
     Message[] messages;
 
-    public Messages() throws IOException{
-        File file = new File(System.getProperty("user.dir")+"/messages.txt");
-        BufferedReader br= new BufferedReader(new FileReader(file));
-        String st;
-        int messagesSize=1;
-        while((st=br.readLine())!=null){
-            if(st.startsWith("#"))
-                messagesSize++;
-        }
-        messages=new Message[messagesSize];
-    }
-    public void generateMessages(String path) throws IOException{
-        File file = new File(path);
-        BufferedReader br= new BufferedReader(new FileReader(file));
-        String st;
-        String from="",to="",message="";
-        int i=0;int countingMessages=messages.length-1;
-        while((st=br.readLine())!=null){
-            if(st.startsWith("From:"))
-                from=st.substring(5);
-            else if(st.startsWith("To:"))
-                to=st.substring(3);
-            else if(!st.startsWith("#"))
-                message+=st;
-            else if((st.startsWith("#"))){
-                Message massageToInput=new Message(from,to,message);
-                messages[i]=massageToInput;
-                i++;
-                if(countingMessages!=0){
-                from="";to="";message="";}
-                countingMessages--;
+    public Messages(){
+        try {
+            File file = new File(System.getProperty("user.dir") + "/messages.txt");
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String st;
+            int messagesSize = 1;
+            while ((st = br.readLine()) != null) {
+                if (st.startsWith("#"))
+                    messagesSize++;
             }
+            messages = new Message[messagesSize];
         }
-        Message massageToInput=new Message(from,to,message);
-        messages[i]=massageToInput;
+        catch (IOException e){
+            System.out.println(e);
+        }
+    }
+    public void generateMessages(String path){
+        try {
+            File file = new File(path);
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String st;
+            String from = "", to = "", message = "";
+            int i = 0;
+            int countingMessages = messages.length - 1;
+            while ((st = br.readLine()) != null) {
+                if (st.startsWith("From:"))
+                    from = st.substring(5);
+                else if (st.startsWith("To:"))
+                    to = st.substring(3);
+                else if (!st.startsWith("#"))
+                    message += st;
+                else if ((st.startsWith("#"))) {
+                    Message massageToInput = new Message(from, to, message);
+                    messages[i] = massageToInput;
+                    i++;
+                    if (countingMessages != 0) {
+                        from = "";
+                        to = "";
+                        message = "";
+                    }
+                    countingMessages--;
+                }
+            }
+            Message massageToInput = new Message(from, to, message);
+            messages[i] = massageToInput;
+        }
+        catch(IOException e)
+        {System.out.println(e);}
     }
     public Iterator<Message> iterator(){
         return new MessagesIterator();
@@ -51,13 +64,6 @@ public class Messages implements Iterable<Message> {
         String[] toCount=count.getThemessage().split(" ");
         return toCount.length;
 
-    }
-    private int findTheFirstClosestPrime(int k){
-        PrimeIterator it=new PrimeIterator();
-        int prime=it.next();
-        while (prime<=k)
-            prime=it.next();
-        return prime;
     }
     private String checkDot(String toCheck){
         String fixedWord;
@@ -69,7 +75,7 @@ public class Messages implements Iterable<Message> {
         return fixedWord;
     }
     public HashTable createHashTable(int i, int m){
-        int n=countWords(messages[i]);
+        //int n=countWords(messages[i]);
         HashTable tableForSentence=new HashTable(m);
         String fixedWord;
         String[] splitting=messages[i].getThemessage().split(" ");
@@ -88,16 +94,39 @@ public class Messages implements Iterable<Message> {
         }
         return tableForSentence;
     }
-    public HashTable[] createHashTables(int m){
-        HashTable[] outputArr=new HashTable[messages.length];
+    public void createHashTables(String m){
         for(int i=0;i<messages.length;i++){
-            outputArr[i]=createHashTable(i,m);
+            messages[i].setHashTable(createHashTable(i,Integer.parseInt(m)));
         }
-        return outputArr;
     }
-    public String findSpams(String path,BTree btree) throws IOException{
-        String output="";
-        Spams spamArr=new Spams(path);
+    private boolean checkifFriends(int i,BTree btree){
+        boolean found=true;
+        String strToCheck1=messages[i].getNameOfRecipient()+" & "+ messages[i].getNameOfSender();
+        String strToCheck2=messages[i].getNameOfSender()+" & "+messages[i].getNameOfRecipient();
+        Pair toSearch=btree.search(strToCheck1);
+        Pair toSearch2=btree.search(strToCheck2);
+        if(toSearch ==null && toSearch2==null)
+            found=false;
+        return found;
+    }
+    public String findSpams(String path,BTree btree){
+        String output = "";
+        try {
+            Spams spamArr = new Spams(path);
+            for(int i=0;i<messages.length;i++){
+                if (!checkifFriends(i,btree)){
+                    Iterator<Spam> it=spamArr.iterator();
+                    while(it.hasNext()){
+                        Spam obj=it.next();
+                        HashListElement toSearch=messages[i].getTable().searchWord(obj.getWord());
+                        if(toSearch!=null){
+                            if((toSearch.getCounter()/(double)messages[i].getTable().getnumberOfEntries())*100 >= obj.getPercent())
+                                output+=(i+",");}}}}
+            return output;
+        }
+        catch(IOException e) {
+            System.out.println(e);
+        }
         return output;
     }
     private class MessagesIterator<T> implements Iterator<T>{

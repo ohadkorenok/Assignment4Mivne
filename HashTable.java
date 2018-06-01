@@ -12,6 +12,7 @@ public class HashTable {
         loadfactor=numberOfEntries/this.size;
         table= new HashList[this.size];
     }
+    public int getnumberOfEntries(){return numberOfEntries;}
     public int Hashfunction(int k){
         return (int)Math.floor(size*(k*A%1));
     }

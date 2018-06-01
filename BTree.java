@@ -36,6 +36,10 @@ public class BTree {
         return search(node.getChildren().get(i), toFind);
     }
 
+    public Pair<BTreeNode, Integer> search (String toFind){
+        return search(this.root, toFind);
+    }
+
     public BTreeNode insert(String toInsert) {
         BTreeNode r = root;
         if (root.getN() == (2 * t) - 1) {
