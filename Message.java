@@ -1,4 +1,7 @@
 public class Message {
+    /**
+     * Each message has an extra field for inserting it's words to hash-table.
+     */
     private String nameOfSender;
     private String nameOfRecipient;
     private String themessage;
@@ -6,7 +9,7 @@ public class Message {
 
 public Message(String sender,String recipient, String message){
     if(sender==null | recipient==null)
-        throw new IllegalArgumentException();
+        throw new RuntimeException();
     this.nameOfSender=sender;
     this.nameOfRecipient=recipient;
     this.themessage=message;

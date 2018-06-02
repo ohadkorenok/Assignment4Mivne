@@ -4,7 +4,7 @@ public class Spam {
 
     public Spam(String word,int percent){
         if(percent<0 | percent> 100 | word==null)
-            throw new IllegalArgumentException();
+            throw new RuntimeException();
         this.word=word;
         this.percent=percent;
     }

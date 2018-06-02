@@ -24,6 +24,10 @@ public class Messages implements Iterable<Message> {
             System.out.println(e);
         }
     }
+    /**
+    * @param: path for file
+     * Organizing each message and split them into array.
+     */
     public void generateMessages(String path){
         try {
             File file = new File(path);
@@ -60,11 +64,12 @@ public class Messages implements Iterable<Message> {
     public Iterator<Message> iterator(){
         return new MessagesIterator();
     }
-    private int countWords(Message count){
-        String[] toCount=count.getThemessage().split(" ");
-        return toCount.length;
 
-    }
+    /**
+     *
+     * @param toCheck a word with dot in the end.
+     * @return the word without the dot.
+     */
     private String checkDot(String toCheck){
         String fixedWord;
         char dot=toCheck.charAt(toCheck.length()-1);
@@ -74,8 +79,14 @@ public class Messages implements Iterable<Message> {
             fixedWord=toCheck;
         return fixedWord;
     }
+
+    /**
+     *
+     * @param i is the index in the Messages array.
+     * @param m is the outside paramater for the size of the hashtable.
+     * @return hashtable for messages[i].
+     */
     public HashTable createHashTable(int i, int m){
-        //int n=countWords(messages[i]);
         HashTable tableForSentence=new HashTable(m);
         String fixedWord;
         String[] splitting=messages[i].getThemessage().split(" ");
@@ -94,11 +105,19 @@ public class Messages implements Iterable<Message> {
         }
         return tableForSentence;
     }
+
+    /**
+     * Creating HashTables for each message in messages array.
+     * @param m is the size paramater.
+     */
     public void createHashTables(String m){
         for(int i=0;i<messages.length;i++){
             messages[i].setHashTable(createHashTable(i,Integer.parseInt(m)));
         }
     }
+    /**
+     * Checking if both sender and recipient are friends with the friend's Btree.
+     */
     private boolean checkifFriends(int i,BTree btree){
         boolean found=true;
         String strToCheck1=messages[i].getNameOfRecipient()+" & "+ messages[i].getNameOfSender();
@@ -109,10 +128,16 @@ public class Messages implements Iterable<Message> {
             found=false;
         return found;
     }
+
+    /**
+     *
+     * @param path for reading the spam words.
+     * @param btree for understanding friends relations.
+     * @return Which message contain the spam words.
+     */
     public String findSpams(String path,BTree btree){
         String output = "";
         boolean foundSpam=false;
-        try {
             Spams spamArr = new Spams(path);
             for(int i=0;i<messages.length;i++){
                 if (!checkifFriends(i,btree)){
@@ -125,12 +150,12 @@ public class Messages implements Iterable<Message> {
                                 output+=(i+",");foundSpam=true;}
                         }}}foundSpam=false;}
             return BTree.shave(output, ',');
-        }
-        catch(IOException e) {
-            System.out.println(e);
-        }
-        return output;
     }
+
+    /**
+     *
+     * Generic private iterator class.
+     */
     private class MessagesIterator<T> implements Iterator<T>{
         private int index;
         public MessagesIterator(){

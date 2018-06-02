@@ -7,6 +7,10 @@ public class Word {
         this.word=word;
         generateKey();
     }
+
+    /**
+     * Generating for each word an one to one numeric value.
+     */
     public void generateKey(){
         int key=0;
         for(int i=0;i<word.length();i++)
