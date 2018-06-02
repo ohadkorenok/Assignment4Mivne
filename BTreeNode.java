@@ -78,14 +78,21 @@ public class BTreeNode {
 
     public LinkedList<BTreeNode> insertChild(BTreeNode toInsert, int i) {
         this.children.add(i, toInsert);
+        this.setLeaf(false);
         return this.children;
     }
 
     public LinkedList<BTreeNode> insertChild(BTreeNode toInsert) {
         this.children.add(toInsert);
+        this.setLeaf(false);
         return this.children;
     }
 
+    /**
+     * This method is just for assistance for us, and has no use in the main function.
+     * The full ToString is in `Btree.toString`.
+     * @return String.
+     */
     @Override
     public String toString() {
         System.out.println("entered to toString of BtreeNode");
