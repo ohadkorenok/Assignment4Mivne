@@ -5,7 +5,7 @@ public class HashTable {
     private int numberOfEntries;
     private final double A=0.618;
     public HashTable(int size){
-        if(size<0)
+        if(size<=0)
             throw new RuntimeException();
         this.size=size;
         numberOfEntries=0;
@@ -33,7 +33,22 @@ public class HashTable {
     /**
      * Method who insert the element to the first place in the linked-list.
      */
+    public void insert(Object element){
+        if(element==null)
+            throw new RuntimeException();
+        if(element instanceof String){
+            Word toHash=new Word((String)element);
+            this.gainandChain(this.Hashfunction(toHash.getKey()),element);
+        }
+    }
+
+    /**
+     * The main inserting function of the hash-table, creating a Linked-List if necessery.
+     * @param hashCode required for the element.
+     */
     public void gainandChain(int hashCode,Object element){
+        if(element==null)
+            throw new RuntimeException();
         if(table[hashCode]==null)
             table[hashCode]=new HashList();
         table[hashCode].addFirst(element,hashCode);

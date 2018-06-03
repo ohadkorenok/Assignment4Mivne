@@ -13,7 +13,7 @@ public class HashList<T> {
      */
     public void addFirst(T element,int key) {
         if (element == null)
-            throw new NullPointerException();
+            throw new RuntimeException();
         size++;
         first = new HashListElement<T>(key,element, first);
     }

@@ -3,14 +3,21 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class Messages implements Iterable<Message> {
     Message[] messages;
 
     public Messages(){
+        this.messages=null;
+    }
+
+    /**
+     * Determinating the space requiered for the array.
+     * @param path to get the messages file.
+     */
+    private void settingTheArray(String path){
         try {
-            File file = new File(System.getProperty("user.dir") + "/messages.txt");
+            File file = new File(path);
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
             int messagesSize = 1;
@@ -30,6 +37,7 @@ public class Messages implements Iterable<Message> {
      */
     public void generateMessages(String path){
         try {
+            settingTheArray(path);
             File file = new File(path);
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
@@ -71,6 +79,8 @@ public class Messages implements Iterable<Message> {
      * @return the word without the dot.
      */
     private String checkDot(String toCheck){
+        if(toCheck=="")
+            return toCheck;
         String fixedWord;
         char dot=toCheck.charAt(toCheck.length()-1);
         if(dot=='.')
@@ -91,18 +101,19 @@ public class Messages implements Iterable<Message> {
         String fixedWord;
         String[] splitting=messages[i].getThemessage().split(" ");
         for(int j=0;j<splitting.length;j++){
-            fixedWord=checkDot(splitting[j]);
-            Word input=new Word(fixedWord);
-            int hashCode=tableForSentence.Hashfunction(input.getKey());
-            if(tableForSentence.getTable()[hashCode]!=null) {
-                if (!tableForSentence.getTable()[hashCode].containsandRaise(input.getWord())) // Assuming the same words have the same generative key
-                    tableForSentence.gainandChain(hashCode,input.getWord());
-                else
-                    tableForSentence.updateFields();
+            if(splitting[j]!=""){
+                fixedWord=checkDot(splitting[j]);
+                Word input=new Word(fixedWord);
+                int hashCode=tableForSentence.Hashfunction(input.getKey());
+                if(tableForSentence.getTable()[hashCode]!=null) {
+                    if (!tableForSentence.getTable()[hashCode].containsandRaise(input.getWord())) // Assuming the same words have the same generative key
+                        tableForSentence.gainandChain(hashCode,input.getWord());
+                    else
+                        tableForSentence.updateFields();
             }
-            else
-                tableForSentence.gainandChain(hashCode,input.getWord());
-        }
+                else
+                    tableForSentence.gainandChain(hashCode,input.getWord());
+        }}
         return tableForSentence;
     }
 
@@ -170,8 +181,7 @@ public class Messages implements Iterable<Message> {
                 this.index++;
                 return (T)messages[currindex];
             }
-            throw new NoSuchElementException();
+            throw new RuntimeException();
         }
     }
-
 }

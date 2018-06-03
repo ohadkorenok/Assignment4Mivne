@@ -3,7 +3,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public class Spams implements Iterable<Spam> {
     private Spam[] arr;
@@ -64,7 +63,7 @@ public class Spams implements Iterable<Spam> {
                 this.index++;
                 return (T)arr[currindex];
             }
-            throw new NoSuchElementException();
+            throw new RuntimeException();
         }
     }
 }
