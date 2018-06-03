@@ -6,9 +6,12 @@ public class BTree {
     private int t;
 
     public BTree(String tVal) {
-        if(Integer.parseInt(tVal)<=0 | tVal=="")
+        try{
+            t = Integer.parseInt(tVal);
+        }
+        catch (NumberFormatException e){
             throw new RuntimeException();
-        this.t = Integer.parseInt(tVal);
+        }
         this.root = new BTreeNode(t);
         this.root.setLeaf(true);
         this.root.setN(0);
@@ -115,7 +118,10 @@ public class BTree {
     }
 
     public BTree createFullTree(String input) {
-        readFile(input);
+        boolean t = readFile(input);
+        if(!t){
+            return this;
+        }
         insertFileToTree();
         return this;
     }
@@ -136,6 +142,15 @@ public class BTree {
 
         }
         return true;
+    }
+    public boolean contains(String st){
+        Pair<BTreeNode, Integer> answer = this.search(st);
+        if(answer == null){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
     /**
@@ -185,6 +200,7 @@ public class BTree {
      */
     public String toString() {
         String st = "";
+        if(root.getN()==0){ return ""; }
         QueueAsLinkedList<LinkedList<LinkedList<BTreeNode>>> q = new QueueAsLinkedList<>();
         BTreeNode r = root;
         LinkedList<LinkedList<BTreeNode>> level = new LinkedList<>();
