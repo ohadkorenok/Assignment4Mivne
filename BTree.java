@@ -6,6 +6,8 @@ public class BTree {
     private int t;
 
     public BTree(String tVal) {
+        if(Integer.parseInt(tVal)<=0 | tVal=="")
+            throw new RuntimeException();
         this.t = Integer.parseInt(tVal);
         this.root = new BTreeNode(t);
         this.root.setLeaf(true);
@@ -21,6 +23,7 @@ public class BTree {
      *  keys.
      */
     public Pair<BTreeNode, Integer> search(BTreeNode node, String toFind) {
+
         int i = 0;
 
         while (i < node.getN() && toFind.compareTo(node.getKeys().get(i)) > 0) {
@@ -42,6 +45,8 @@ public class BTree {
      * @return Pair Object.
      */
     public Pair<BTreeNode, Integer> search(String toFind) {
+        if(toFind==null || toFind=="")
+            throw new RuntimeException();
         return search(this.root, toFind);
     }
 
@@ -51,6 +56,8 @@ public class BTree {
      * @return the root (BtreeNode object)
      */
     public BTreeNode insert(String toInsert) {
+        if(toInsert=="")
+            throw new RuntimeException();
         BTreeNode r = root;
         if (root.getN() == (2 * t) - 1) {
             BTreeNode s = new BTreeNode(t);
@@ -156,9 +163,12 @@ public class BTree {
      * @return the object st without the last letter, if the last character is c.
      */
     public static String shave(String st, char c) {
+        if(st=="")
+            return st;
+        else{
         if (st.charAt(st.length() - 1) == c) {
             st = st.substring(0, st.length() - 1);
-        }
+        }}
         return st;
     }
 
